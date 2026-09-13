@@ -143,6 +143,28 @@ The Dockerfile builds on `node:20-bookworm-slim` rather than Alpine, because
 Payload's `sharp` image-processing dependency needs glibc-compatible native
 bindings.
 
+### Running the first migration
+
+The production image only ships the Next.js standalone runtime — no
+`src/migrations` source and no Payload CLI — so migrations aren't run
+automatically inside the container. After the first deploy, run them once
+against the live database from your machine:
+
+```bash
+railway tcp-proxy create --port 5432 --service Postgres   # temporary public endpoint
+DATABASE_URL="postgresql://postgres:<password>@<proxy-host>:<proxy-port>/railway" \
+  PAYLOAD_SECRET=temp NEXT_PUBLIC_SERVER_URL=https://your-app.up.railway.app \
+  npm run payload -- migrate
+railway tcp-proxy delete <proxy-id> --yes                 # close it back up
+```
+
+The connection details for the proxy come from `railway tcp-proxy create`'s
+output; `PAYLOAD_SECRET`/`NEXT_PUBLIC_SERVER_URL` can be any placeholder for
+this one-off run — only `DATABASE_URL` needs to be real. `src/migrations/`
+already contains the initial schema migration generated from this
+template's collections; you only need to re-run `payload migrate:create`
+if you add or change a collection afterward.
+
 ## Notes on the base template
 
 This project was scaffolded from Payload's official `create-payload-app`
