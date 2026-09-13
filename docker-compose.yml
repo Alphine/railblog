@@ -1,0 +1,20 @@
+version: '3'
+
+# Local dev convenience only — Railway provisions its own managed Postgres
+# and volume via .railway/railway.ts. This just gives you a local Postgres
+# to point DATABASE_URL at when running `npm run dev` on the host.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: railblog
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:

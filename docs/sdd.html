@@ -1,0 +1,607 @@
+<title>RailBlog</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper: #f2f4f7;
+    --surface: #ffffff;
+    --ink: #14171f;
+    --ink-soft: #4b5160;
+    --line: #dadee6;
+    --line-strong: #b9c0cf;
+    --accent: #1e4fd6;
+    --accent-soft: #e6ecfd;
+    --accent-ink: #0f2f8a;
+    --ok: #1f8a5f;
+    --ok-soft: #e3f5ec;
+    --warn: #a8660b;
+    --warn-soft: #faedd8;
+    --risk: #c4382e;
+    --risk-soft: #fbe6e4;
+    --track: #c7cedb;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper: #12141a;
+      --surface: #1a1d26;
+      --ink: #e7e9ee;
+      --ink-soft: #a4abbc;
+      --line: #2c3040;
+      --line-strong: #3c4257;
+      --accent: #7091ff;
+      --accent-soft: #202b4d;
+      --accent-ink: #b7c6ff;
+      --ok: #4fcf98;
+      --ok-soft: #17332a;
+      --warn: #e0ac54;
+      --warn-soft: #3a2c14;
+      --risk: #ef6a5f;
+      --risk-soft: #3a1e1c;
+      --track: #333a4d;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper: #12141a;
+    --surface: #1a1d26;
+    --ink: #e7e9ee;
+    --ink-soft: #a4abbc;
+    --line: #2c3040;
+    --line-strong: #3c4257;
+    --accent: #7091ff;
+    --accent-soft: #202b4d;
+    --accent-ink: #b7c6ff;
+    --ok: #4fcf98;
+    --ok-soft: #17332a;
+    --warn: #e0ac54;
+    --warn-soft: #3a2c14;
+    --risk: #ef6a5f;
+    --risk-soft: #3a1e1c;
+    --track: #333a4d;
+  }
+
+  *{ box-sizing: border-box; }
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+  ::selection{ background: var(--accent-soft); color: var(--accent-ink); }
+
+  code, .mono, .field-value, .toc-index, .eyebrow, th, td, .status-pill, .var-name{
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  }
+
+  h1,h2,h3{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  a{ color: var(--accent); }
+
+  .eyebrow{
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* ---------- header / manifest ---------- */
+  .manifest{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.75rem 2rem 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .manifest-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .manifest-title h1{
+    font-size: 2.05rem;
+    margin: 0.35rem 0 0.5rem;
+  }
+  .manifest-title p{
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 1rem;
+  }
+  .ticket{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 0.15rem 1.5rem;
+    padding: 0.9rem 1.15rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+    min-width: 15rem;
+  }
+  .field-label{
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    align-self: center;
+  }
+  .field-value{ font-size: 0.8rem; font-weight: 500; align-self: center; }
+  .status-pill{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.1rem 0.5rem 0.15rem;
+    border-radius: 2px;
+  }
+  .status-pill::before{ content:""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .status-draft{ background: var(--warn-soft); color: var(--warn); }
+
+  /* ---------- layout ---------- */
+  .layout{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+    display: grid;
+    grid-template-columns: 232px minmax(0,1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  nav.toc{
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    border-left: 1px solid var(--line);
+    padding-left: 1rem;
+  }
+  nav.toc a{
+    display: flex;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--ink-soft);
+    padding: 0.32rem 0;
+    font-size: 0.82rem;
+    border-left: 2px solid transparent;
+    margin-left: -1.14rem;
+    padding-left: 1rem;
+  }
+  nav.toc a:hover{ color: var(--ink); border-left-color: var(--line-strong); }
+  .toc-index{ color: var(--accent); font-size: 0.78rem; min-width: 1.4em; }
+
+  main{ min-width: 0; }
+  section{ scroll-margin-top: 1.5rem; margin-bottom: 3.4rem; }
+  section > .eyebrow{ display:block; margin-bottom: 0.4rem; }
+  section h2{ font-size: 1.35rem; margin: 0 0 0.9rem; display:flex; align-items:baseline; gap:0.6rem; }
+  section h2 .num{ color: var(--accent); font-size: 1rem; }
+  section h3{ font-size: 1.02rem; margin: 1.6rem 0 0.6rem; }
+  section p{ margin: 0 0 0.9rem; max-width: 68ch; }
+  section ul, section ol{ margin: 0 0 1rem; padding-left: 1.3rem; max-width: 66ch; }
+  section li{ margin-bottom: 0.4rem; }
+  section li::marker{ color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 0.85em; }
+
+  .callout{
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 0.85rem 1.1rem;
+    border-radius: 0 3px 3px 0;
+    max-width: 66ch;
+    margin: 0.5rem 0 1.1rem;
+  }
+  .callout p{ margin: 0; color: var(--ink); }
+
+  /* ---------- tables ---------- */
+  .table-wrap{ overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; }
+  table{ width: 100%; border-collapse: collapse; font-size: 0.85rem; background: var(--surface); }
+  thead th{
+    text-align: left;
+    padding: 0.6rem 0.85rem;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  tbody td{
+    padding: 0.62rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--ink);
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.font-body{ font-family: "Public Sans", sans-serif; }
+  .var-name{ color: var(--accent-ink); font-weight: 500; white-space: nowrap; }
+  .req-yes{ color: var(--ok); font-weight: 600; }
+  .req-no{ color: var(--ink-soft); }
+
+  .badge{
+    display:inline-block; font-size:0.68rem; font-weight:600; padding:0.1rem 0.45rem;
+    border-radius:2px; white-space:nowrap;
+  }
+  .badge-web{ background: var(--accent-soft); color: var(--accent-ink); }
+  .badge-worker{ background: var(--ok-soft); color: var(--ok); }
+  .badge-both{ background: var(--warn-soft); color: var(--warn); }
+
+  /* ---------- diagram ---------- */
+  .diagram-frame{
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 1.25rem 1rem 0.5rem;
+  }
+  .diagram-frame svg{ width: 100%; height: auto; display:block; }
+  .diagram-caption{
+    font-size: 0.78rem; color: var(--ink-soft); padding: 0.6rem 0.2rem 0.9rem; margin:0;
+  }
+  .svg-label{ font-family: "IBM Plex Mono", monospace; font-size: 12px; fill: var(--ink); }
+  .svg-label-soft{ font-family: "IBM Plex Mono", monospace; font-size: 10px; fill: var(--ink-soft); }
+  .svg-node{ fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+  .svg-node-ext{ fill: var(--paper); stroke: var(--track); stroke-width: 1.5; stroke-dasharray: 3 3; }
+  .line-db{ stroke: var(--accent); stroke-width: 2.5; fill:none; }
+  .line-queue{ stroke: var(--ok); stroke-width: 2.5; fill:none; }
+  .line-ext{ stroke: var(--track); stroke-width: 2; fill:none; stroke-dasharray: 5 4; }
+  .boundary{ fill:none; stroke: var(--line-strong); stroke-width: 1.5; stroke-dasharray: 2 5; }
+  .node-dot{ fill: var(--surface); stroke: var(--ink-soft); stroke-width: 1.5; }
+
+  /* ---------- phases ---------- */
+  .phases{ display:flex; flex-direction:column; gap:0; border-left: 2px solid var(--line); margin-left: 0.6rem; }
+  .phase{ position:relative; padding: 0 0 1.6rem 1.6rem; }
+  .phase:last-child{ padding-bottom: 0; }
+  .phase::before{
+    content:""; position:absolute; left:-6.5px; top:0.2rem; width:11px; height:11px;
+    border-radius:50%; background: var(--surface); border: 2px solid var(--accent);
+  }
+  .phase-head{ display:flex; align-items:baseline; gap:0.7rem; margin-bottom:0.25rem; flex-wrap:wrap; }
+  .phase-head h3{ margin:0; font-size:0.98rem; }
+  .phase-when{ font-size:0.72rem; color: var(--ink-soft); }
+  .phase p{ margin:0; color: var(--ink-soft); max-width: 60ch; }
+
+  /* ---------- risk severity ---------- */
+  .sev{ display:inline-flex; align-items:center; gap:0.4rem; font-weight:600; font-size:0.8rem; }
+  .sev::before{ content:""; width:8px; height:8px; border-radius:1px; }
+  .sev-high::before{ background: var(--risk); }
+  .sev-med::before{ background: var(--warn); }
+  .sev-low::before{ background: var(--ok); }
+  .sev-high{ color: var(--risk); }
+  .sev-med{ color: var(--warn); }
+  .sev-low{ color: var(--ok); }
+
+  /* ---------- competitive bars ---------- */
+  .bars{ display:flex; flex-direction:column; gap:0.55rem; margin: 0.5rem 0 1.2rem; }
+  .bar-row{ display:grid; grid-template-columns: 140px 1fr 4.5rem; align-items:center; gap:0.7rem; font-size:0.82rem; }
+  .bar-label{ color: var(--ink-soft); }
+  .bar-track{ background: var(--line); border-radius: 2px; height: 10px; overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:2px; background: var(--track); }
+  .bar-fill.hi{ background: var(--ink-soft); }
+  .bar-fill.accent{ background: var(--accent); }
+  .bar-value{ font-family:"IBM Plex Mono",monospace; font-size:0.76rem; color: var(--ink-soft); text-align:right; }
+
+  footer{
+    max-width: 1180px; margin: 0 auto; padding: 2rem 2rem 3rem;
+    border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 0.8rem;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;
+  }
+
+  @media (max-width: 860px){
+    .layout{ grid-template-columns: 1fr; }
+    nav.toc{
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      border-left: none;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 0.8rem 0;
+      gap: 0 1rem;
+      margin-bottom: 0.5rem;
+    }
+    nav.toc a{ margin-left:0; padding-left:0; border-left:none; }
+    .manifest-top{ flex-direction: column; }
+    .bar-row{ grid-template-columns: 90px 1fr 3.5rem; }
+  }
+</style>
+
+<header class="manifest">
+  <div class="manifest-top">
+    <div class="manifest-title">
+      <span class="eyebrow">System Design Document</span>
+      <h1>RailBlog</h1>
+      <p>A one-service blog &amp; content-site template for Railway — Next.js 15 with Payload CMS 3 embedded in the same app, backed by a single Postgres plugin. No separate CMS backend, no separate frontend deploy.</p>
+    </div>
+    <div class="ticket">
+      <span class="field-label">Doc ID</span><span class="field-value">RB-SDD-001</span>
+      <span class="field-label">Status</span><span class="field-value"><span class="status-pill status-draft">Draft</span></span>
+      <span class="field-label">Version</span><span class="field-value">0.1.0</span>
+      <span class="field-label">Route</span><span class="field-value">web · postgres</span>
+      <span class="field-label">Target platform</span><span class="field-value">Railway</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Table of contents">
+    <a href="#overview"><span class="toc-index">01</span>Overview</a>
+    <a href="#goals"><span class="toc-index">02</span>Goals &amp; non-goals</a>
+    <a href="#users"><span class="toc-index">03</span>Target user</a>
+    <a href="#architecture"><span class="toc-index">04</span>Architecture</a>
+    <a href="#stack"><span class="toc-index">05</span>Stack decisions</a>
+    <a href="#data"><span class="toc-index">06</span>Data model</a>
+    <a href="#flows"><span class="toc-index">07</span>Core flows</a>
+    <a href="#env"><span class="toc-index">08</span>Environment variables</a>
+    <a href="#repo"><span class="toc-index">09</span>Repo &amp; deployment</a>
+    <a href="#security"><span class="toc-index">10</span>Security</a>
+    <a href="#rollout"><span class="toc-index">11</span>Rollout plan</a>
+    <a href="#risks"><span class="toc-index">12</span>Risks</a>
+    <a href="#metrics"><span class="toc-index">13</span>Success metrics</a>
+  </nav>
+
+  <main>
+
+    <section id="overview">
+      <span class="eyebrow">01 / Context</span>
+      <h2><span class="num">01</span>Overview</h2>
+      <p>The Blogs category on Railway's template hub is its quietest — 65 templates against 940 for AI/ML. But "quiet" isn't the same as "open": Ghost alone accounts for roughly 3,600 of the category's deploys across nine near-duplicate listings, because it's a real one-click admin panel and nothing else there competes on that ground.</p>
+      <div class="bars">
+        <div class="bar-row"><span class="bar-label">Ghost (9 listings)</span><div class="bar-track"><div class="bar-fill hi" style="width:100%"></div></div><span class="bar-value">~3.6K</span></div>
+        <div class="bar-row"><span class="bar-label">WordPress (4)</span><div class="bar-track"><div class="bar-fill" style="width:44%"></div></div><span class="bar-value">~1.6K</span></div>
+        <div class="bar-row"><span class="bar-label">Comment widgets</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span class="bar-value">~770</span></div>
+        <div class="bar-row"><span class="bar-label">Next.js/Astro + CMS</span><div class="bar-track"><div class="bar-fill accent" style="width:3%"></div></div><span class="bar-value">114</span></div>
+      </div>
+      <p>That last row is the gap. Only two listings exist (<em>next-wp</em>, a Next.js + headless WordPress starter, and a Next.js + Strapi blog), and both need two or three separate services to run — a Next.js frontend, a CMS backend, sometimes its own database. Neither is actually lighter than Ghost; they're just newer.</p>
+      <div class="callout">
+        <p><strong>Thesis —</strong> ship the first "modern stack" blog template that is genuinely a single service. Payload CMS 3 runs as a Next.js plugin, not a separate backend, so the whole thing — admin panel, API, and frontend — is one Next.js app plus one Postgres plugin.</p>
+      </div>
+    </section>
+
+    <section id="goals">
+      <span class="eyebrow">02 / Scope</span>
+      <h2><span class="num">02</span>Goals &amp; non-goals</h2>
+      <h3>Goals</h3>
+      <ul>
+        <li>One-click deploy to a working blog: an admin login, a published sample post, and a live index page — no code changes required.</li>
+        <li>Exactly two Railway resources: the app service and a Postgres plugin. No queue, no worker, no second app.</li>
+        <li>SEO and syndication out of the box: per-post meta tags, sitemap.xml, and an RSS feed — table stakes for a blog that competitors here mostly skip.</li>
+        <li>Uploaded media survives a redeploy (a Railway Volume, not the container's ephemeral disk).</li>
+      </ul>
+      <h3>Non-goals</h3>
+      <ul>
+        <li>Newsletter delivery / paid memberships — that's Ghost's strongest ground and out of scope for v1.</li>
+        <li>Multi-author roles beyond Payload's built-in admin/editor split.</li>
+        <li>Import tooling from WordPress or Ghost.</li>
+      </ul>
+    </section>
+
+    <section id="users">
+      <span class="eyebrow">03 / Audience</span>
+      <h2><span class="num">03</span>Target user</h2>
+      <p>A developer who already has (or is about to build) a Next.js product — very plausibly someone who just deployed <a href="https://github.com/Alphine/Railhead">Railhead</a> — and needs a blog or docs section for marketing, SEO, or changelog purposes. They want to write in a real admin UI, not hand-edit MDX files in git, but they also don't want to run a second service just to do it.</p>
+    </section>
+
+    <section id="architecture">
+      <span class="eyebrow">04 / System</span>
+      <h2><span class="num">04</span>Architecture</h2>
+      <p>One Railway service, one managed plugin. Payload's admin panel, its REST/GraphQL/Local API, and the public-facing blog all render from the same Next.js process — there is no network hop between "the CMS" and "the site" because they're the same app.</p>
+
+      <div class="diagram-frame">
+        <svg viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram: readers and the site author both reach the single web service, which reads and writes Postgres and a persistent volume for media.">
+          <rect class="boundary" x="230" y="30" width="420" height="240" rx="6"></rect>
+          <text x="246" y="54" class="svg-label-soft">RAILWAY PRIVATE NETWORK</text>
+
+          <!-- external: reader -->
+          <rect class="svg-node-ext" x="20" y="70" width="150" height="56" rx="4"></rect>
+          <text x="95" y="94" text-anchor="middle" class="svg-label">Reader</text>
+          <text x="95" y="110" text-anchor="middle" class="svg-label-soft">GET /, /posts/[slug]</text>
+
+          <!-- external: author -->
+          <rect class="svg-node-ext" x="20" y="150" width="150" height="56" rx="4"></rect>
+          <text x="95" y="174" text-anchor="middle" class="svg-label">Author</text>
+          <text x="95" y="190" text-anchor="middle" class="svg-label-soft">GET /admin</text>
+
+          <!-- web -->
+          <rect class="svg-node" x="270" y="105" width="150" height="70" rx="4"></rect>
+          <text x="345" y="132" text-anchor="middle" class="svg-label">web</text>
+          <text x="345" y="148" text-anchor="middle" class="svg-label-soft">Next.js + Payload</text>
+          <text x="345" y="163" text-anchor="middle" class="svg-label-soft">admin + frontend + API</text>
+
+          <!-- postgres -->
+          <rect class="svg-node" x="560" y="60" width="150" height="60" rx="4"></rect>
+          <text x="635" y="86" text-anchor="middle" class="svg-label">Postgres</text>
+          <text x="635" y="102" text-anchor="middle" class="svg-label-soft">Railway plugin</text>
+
+          <!-- volume -->
+          <rect class="svg-node" x="560" y="160" width="150" height="60" rx="4"></rect>
+          <text x="635" y="186" text-anchor="middle" class="svg-label">Volume</text>
+          <text x="635" y="202" text-anchor="middle" class="svg-label-soft">/app/media</text>
+
+          <!-- reader -> web -->
+          <path class="line-ext" d="M170 98 H270 V140"></path>
+          <!-- author -> web -->
+          <path class="line-ext" d="M170 178 H270 V150"></path>
+          <!-- web -> postgres -->
+          <path class="line-db" d="M420 128 H560 V90"></path>
+          <circle class="node-dot" cx="420" cy="128" r="3"></circle>
+          <!-- web -> volume -->
+          <path class="line-db" d="M420 152 H560 V190"></path>
+          <circle class="node-dot" cx="420" cy="152" r="3"></circle>
+        </svg>
+        <p class="diagram-caption"><span style="color:var(--accent)">—</span> Postgres + volume traffic &nbsp; <span style="color:var(--track)">┄</span> external, public traffic</p>
+      </div>
+
+      <div class="table-wrap" style="margin-top:1.2rem;">
+        <table>
+          <thead><tr><th>Resource</th><th>Runtime</th><th>Public port</th><th>Responsibility</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-web">web</span></td><td class="font-body">Next.js 15 (App Router) + Payload 3</td><td class="font-body">Yes</td><td class="font-body">Admin panel, frontend rendering, REST/GraphQL/Local API, media upload handling</td></tr>
+            <tr><td class="font-body">Postgres</td><td class="font-body">Railway plugin</td><td class="font-body">No</td><td class="font-body">Posts, categories, media metadata, admin users</td></tr>
+            <tr><td class="font-body">Volume</td><td class="font-body">Railway volume, mounted at <code>/app/media</code></td><td class="font-body">No</td><td class="font-body">Uploaded images, survives redeploys</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="stack">
+      <span class="eyebrow">05 / Decisions</span>
+      <h2><span class="num">05</span>Stack decisions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Layer</th><th>Choice</th><th>Rejected</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="font-body">CMS</td><td class="var-name">Payload CMS 3</td><td class="font-body">Strapi, Directus</td><td class="font-body">Runs as a Next.js plugin in the same process — the only headless CMS that turns this into a one-service deploy.</td></tr>
+            <tr><td class="font-body">Database</td><td class="var-name">Postgres</td><td class="font-body">MongoDB</td><td class="font-body">Matches Railway's plugin ecosystem and every other template in this family (Railhead); Payload's Postgres adapter is first-party.</td></tr>
+            <tr><td class="font-body">Rich text</td><td class="var-name">Lexical (default)</td><td class="font-body">Slate</td><td class="font-body">Payload 3's default editor; actively maintained, no reason to swap.</td></tr>
+            <tr><td class="font-body">Media storage</td><td class="var-name">Railway Volume (local disk adapter)</td><td class="font-body">S3-compatible bucket</td><td class="font-body">Zero extra service or credentials for v1. Documented upgrade path to <code>@payloadcms/storage-s3</code> if a user needs CDN-backed media later.</td></tr>
+            <tr><td class="font-body">Builder</td><td class="var-name">Dockerfile</td><td class="font-body">Nixpacks</td><td class="font-body">Payload's image-processing dependency (<code>sharp</code>) needs native bindings; a pinned Dockerfile avoids Nixpacks guessing the wrong build image.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="data">
+      <span class="eyebrow">06 / Schema</span>
+      <h2><span class="num">06</span>Data model</h2>
+      <p>Defined as Payload collections (TypeScript config, not hand-written SQL) — Payload generates and migrates the underlying Postgres tables.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Collection</th><th>Key fields</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="var-name">posts</td><td class="font-body">title, slug, content (richtext), excerpt, featuredImage, categories, status, publishedAt, seo (meta title/description/image)</td><td class="font-body">Draft/published workflow via Payload's versions feature</td></tr>
+            <tr><td class="var-name">categories</td><td class="font-body">title, slug</td><td class="font-body">Many-to-many with posts</td></tr>
+            <tr><td class="var-name">media</td><td class="font-body">filename, alt, sizes (auto-generated thumbnails)</td><td class="font-body">Backed by the mounted volume via Payload's local storage adapter</td></tr>
+            <tr><td class="var-name">users</td><td class="font-body">email, password (hashed), role</td><td class="font-body">Payload's built-in auth collection — logs into <code>/admin</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="flows">
+      <span class="eyebrow">07 / Sequences</span>
+      <h2><span class="num">07</span>Core flows</h2>
+
+      <h3>Authoring</h3>
+      <ol>
+        <li>Author logs into <code>/admin</code> (Payload's built-in auth against the <code>users</code> collection).</li>
+        <li>Drafts a post in the Lexical editor; images upload straight to the mounted volume.</li>
+        <li>Publishing sets <code>status = published</code> and <code>publishedAt</code>, and triggers an <code>afterChange</code> hook.</li>
+      </ol>
+
+      <h3>Rendering</h3>
+      <ol>
+        <li>The frontend (<code>app/(frontend)</code>) reads posts through Payload's Local API — a direct in-process function call, not an HTTP round trip to itself.</li>
+        <li>Post pages use Next.js's on-demand revalidation: the <code>afterChange</code> hook from the authoring flow calls <code>revalidatePath</code> for the post's URL and the index page, so a publish is live within seconds without a full rebuild.</li>
+      </ol>
+
+      <h3>Syndication</h3>
+      <ol>
+        <li><code>/sitemap.xml</code> and <code>/rss.xml</code> are route handlers that query published posts through the same Local API and serve XML directly — no separate generation step, always current.</li>
+      </ol>
+    </section>
+
+    <section id="env">
+      <span class="eyebrow">08 / Configuration</span>
+      <h2><span class="num">08</span>Environment variables</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Variable</th><th>Required</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td class="var-name">DATABASE_URL</td><td class="req-yes">yes</td><td class="font-body">Injected via Railway reference variable from the Postgres plugin</td></tr>
+            <tr><td class="var-name">PAYLOAD_SECRET</td><td class="req-yes">yes</td><td class="font-body">Signs admin session cookies and encrypts preference data</td></tr>
+            <tr><td class="var-name">NEXT_PUBLIC_SERVER_URL</td><td class="req-yes">yes</td><td class="font-body">Public origin used in sitemap/RSS URLs and SEO meta tags</td></tr>
+            <tr><td class="var-name">MEDIA_UPLOAD_DIR</td><td class="req-no">no</td><td class="font-body">Defaults to the mounted volume path; override only for local dev without a volume</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="repo">
+      <span class="eyebrow">09 / Delivery</span>
+      <h2><span class="num">09</span>Repo &amp; deployment topology</h2>
+      <p>A single Next.js application — no monorepo, no workspaces:</p>
+      <ul>
+        <li><code>src/payload.config.ts</code> — collections, Postgres adapter, plugins (SEO, Lexical)</li>
+        <li><code>src/collections/</code> — Posts, Categories, Media, Users</li>
+        <li><code>src/app/(payload)/</code> — Payload's generated admin routes</li>
+        <li><code>src/app/(frontend)/</code> — the public blog: index, post pages, sitemap, RSS</li>
+        <li><code>Dockerfile</code> — pinned build image with <code>sharp</code>'s native dependencies</li>
+      </ul>
+      <p>Postgres is attached as a Railway plugin and wired in via a reference variable (<code>${{Postgres.DATABASE_URL}}</code>); a Railway Volume is mounted at <code>/app/media</code> for uploads — both declared in <code>.railway/railway.ts</code>.</p>
+    </section>
+
+    <section id="security">
+      <span class="eyebrow">10 / Hardening</span>
+      <h2><span class="num">10</span>Security</h2>
+      <ul>
+        <li><code>/admin</code> is protected by Payload's own session auth; there is no separate reverse-proxy password layer to keep in sync.</li>
+        <li><code>PAYLOAD_SECRET</code> is generated per-deploy, never checked into the repo or hardcoded in a default.</li>
+        <li>Public networking is disabled on the Postgres plugin by default — only <span class="var-name">web</span> reaches it, over the private network.</li>
+        <li>Upload MIME-type and size limits are enforced in the <code>media</code> collection config, not left to defaults.</li>
+      </ul>
+    </section>
+
+    <section id="rollout">
+      <span class="eyebrow">11 / Timeline</span>
+      <h2><span class="num">11</span>Rollout plan</h2>
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 1 — Core CMS</h3><span class="phase-when">week 1</span></div>
+          <p>Payload embedded in Next.js, Posts/Categories/Media/Users collections, Postgres adapter, admin panel working end to end.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 2 — Public site</h3><span class="phase-when">week 2</span></div>
+          <p>Frontend theme, post/index pages, on-demand revalidation on publish, SEO meta tags.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 3 — Syndication &amp; polish</h3><span class="phase-when">week 3</span></div>
+          <p>Sitemap and RSS routes, volume-backed media uploads, Dockerfile tuned for a fast Railway build.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 4 — Submit</h3><span class="phase-when">week 4</span></div>
+          <p>README, architecture diagram, submit to the Railway template gallery under Blogs.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="risks">
+      <span class="eyebrow">12 / Watch list</span>
+      <h2><span class="num">12</span>Risks &amp; mitigations</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr></thead>
+          <tbody>
+            <tr><td class="font-body">Payload 3 is young (late 2024) relative to Ghost/WordPress; breaking changes land faster</td><td><span class="sev sev-high">High</span></td><td class="font-body">Pin exact versions; quarterly update pass, same discipline as Railhead</td></tr>
+            <tr><td class="font-body">Media uploads lost if a user deploys without attaching the volume</td><td><span class="sev sev-med">Medium</span></td><td class="font-body"><code>.railway/railway.ts</code> declares the volume as part of the template — not an optional step</td></tr>
+            <tr><td class="font-body"><code>sharp</code>'s native build fails under the wrong builder/base image</td><td><span class="sev sev-med">Medium</span></td><td class="font-body">Ship a tested Dockerfile rather than relying on Nixpacks auto-detection</td></tr>
+            <tr><td class="font-body">Read as "not a real Ghost alternative" since it skips newsletters/memberships</td><td><span class="sev sev-low">Low</span></td><td class="font-body">Position explicitly as a dev-owned blog/docs section, not a Ghost replacement</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="metrics">
+      <span class="eyebrow">13 / Definition of done</span>
+      <h2><span class="num">13</span>Success metrics</h2>
+      <ul>
+        <li>50+ deploys within 90 days — enough to clear every existing "modern stack" entry in the category combined (114 total, split across two listings).</li>
+        <li>Zero-code-change deploy success rate above 90%.</li>
+        <li>Listed under Blogs with the Verified badge within the first review cycle.</li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <span>RailBlog SDD · v0.1.0</span>
+  <span>Draft — architecture and phasing subject to change before Phase 1 kickoff</span>
+</footer>
