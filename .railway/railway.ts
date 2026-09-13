@@ -2,10 +2,6 @@ import { defineRailway, github, postgres, service, volume } from 'railway/iac'
 
 // RailBlog — one Postgres database, one persistent Volume for uploaded
 // media, and one Dockerfile-built web service (Next.js + embedded Payload).
-//
-// IMPORTANT: replace the `github(...)` repo slug below with your actual
-// "<owner>/<repo>" once this project is pushed to GitHub — it is a
-// placeholder here since this scaffold has no git remote yet.
 export default defineRailway((ctx) => {
   const db = postgres('Postgres')
 
@@ -16,7 +12,7 @@ export default defineRailway((ctx) => {
   const media = volume('media', { sizeMB: 500 })
 
   const web = service('web', {
-    source: github('Alphine/RailBlog', { branch: 'main' }),
+    source: github('Alphine/railblog', { branch: 'main' }),
     build: { builder: 'DOCKERFILE' },
     env: {
       DATABASE_URL: db.env.DATABASE_URL,
