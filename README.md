@@ -23,6 +23,7 @@ full system design document.
 | Rich text | Lexical (Payload's default editor) |
 | Media storage | Local disk under `public/media`, persisted via a Railway Volume |
 | SEO | `@payloadcms/plugin-seo` — per-post meta title/description/image |
+| Motion | [anime.js](https://animejs.com) — entrance animation on the blog index and the `/dashboard` posting flow |
 
 ## Why one service
 
@@ -76,6 +77,20 @@ live within seconds without a full rebuild — see
   Local API, listing only published content. `/robots.txt` links to both.
 - `/rss.xml` — RSS 2.0 feed of published posts (title, link, pubDate,
   description), also via the Local API.
+
+### Posting dashboard (`/dashboard`)
+
+A lightweight, animated alternative to `/admin` for quick posts — title,
+excerpt, plain-text body, category chips, and a Draft/Published toggle,
+writing through the same `posts` collection (and the same `afterChange`
+revalidation hook) as the full admin editor. It's a fast path for short
+updates, not a replacement: there's no rich-text formatting here, so a
+post that needs headings, embeds, or images is still finished in
+`/admin`. Requires a logged-in Payload user — signing in happens through
+`/admin/login` as normal. Built with [anime.js](https://animejs.com) for
+the entrance animation and the publish-success sequence; the same library
+also drives the staggered reveal on the public blog index
+(`src/components/CollectionArchive/RevealGrid.tsx`).
 
 ## Local development
 
