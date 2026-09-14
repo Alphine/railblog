@@ -175,6 +175,17 @@ wired the Postgres-backed local dev flow.
 
 ## License
 
-See [`LICENSE`](LICENSE) if present, or the base Payload template's license
-terms.
+RailBlog is free and open source under the
+[GNU Lesser General Public License v3.0](LICENSE) (plus
+[`COPYING.LESSER`](COPYING.LESSER) for the additional permissions on top
+of GPL-3.0). Deploy it, fork it, and build a proprietary blog or product
+on top of it — LGPL-3.0 only requires that modifications to RailBlog
+*itself* stay open, not whatever you publish with it. Payload CMS and
+Next.js, which this template depends on, keep their own (MIT) licenses.
+
+There's no license fee and no paid tier of this template. If deploying
+it earns anything, it's through Railway's
+[template kickback program](https://railway.com/open-source-kickback) —
+a share of the usage Railway itself bills, paid to the template's
+maintainer, not to whoever deploys it.
 
