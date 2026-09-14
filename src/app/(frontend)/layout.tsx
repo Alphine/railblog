@@ -10,7 +10,8 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { getCachedGlobal } from '@/utilities/getGlobals'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
@@ -37,7 +38,12 @@ const instrumentSerif = Instrument_Serif({
 
 async function getAppearanceTheme(): Promise<string> {
   try {
-    const appearance = await getCachedGlobal('appearance', 0)()
+    // Deliberately uncached (unlike Header/Footer): this changes rarely
+    // and reads one row, so a fresh read every request is cheap and
+    // means a change made in the admin dashboard shows up immediately —
+    // no revalidateTag/revalidatePath plumbing required.
+    const payload = await getPayload({ config: configPromise })
+    const appearance = await payload.findGlobal({ slug: 'appearance', depth: 0 })
     return appearance?.theme ?? 'default'
   } catch {
     // No live database at build time (e.g. a Docker image build that runs
