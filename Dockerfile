@@ -57,8 +57,12 @@ RUN mkdir -p /app/public/media && chown -R nextjs:nodejs /app/public/media
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-USER nextjs
+# Runs as root: the mounted Volume's ownership needs fixing on every
+# start (see docker-entrypoint.sh), which only root can do — the script
+# itself drops to the unprivileged `nextjs` user before execing node.
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
