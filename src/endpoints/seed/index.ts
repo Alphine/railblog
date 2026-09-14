@@ -173,6 +173,9 @@ export const seed = async ({
   await payload.update({
     id: post1Doc.id,
     collection: 'posts',
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedPosts: [post2Doc.id, post3Doc.id],
     },
@@ -180,6 +183,9 @@ export const seed = async ({
   await payload.update({
     id: post2Doc.id,
     collection: 'posts',
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedPosts: [post1Doc.id, post3Doc.id],
     },
@@ -187,6 +193,9 @@ export const seed = async ({
   await payload.update({
     id: post3Doc.id,
     collection: 'posts',
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedPosts: [post1Doc.id, post2Doc.id],
     },
@@ -206,11 +215,17 @@ export const seed = async ({
     payload.create({
       collection: 'pages',
       depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
       data: home({ heroImage: imageHomeDoc, metaImage: image2Doc }),
     }),
     payload.create({
       collection: 'pages',
       depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
       data: contactPageData({ contactForm: contactForm }),
     }),
   ])
@@ -220,6 +235,9 @@ export const seed = async ({
   await Promise.all([
     payload.updateGlobal({
       slug: 'header',
+      context: {
+        disableRevalidate: true,
+      },
       data: {
         navItems: [
           {
@@ -244,6 +262,9 @@ export const seed = async ({
     }),
     payload.updateGlobal({
       slug: 'footer',
+      context: {
+        disableRevalidate: true,
+      },
       data: {
         navItems: [
           {
@@ -258,15 +279,15 @@ export const seed = async ({
               type: 'custom',
               label: 'Source Code',
               newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/3.x/templates/website',
+              url: 'https://github.com/Alphine/railblog',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Payload',
+              label: 'Deploy on Railway',
               newTab: true,
-              url: 'https://payloadcms.com/',
+              url: 'https://railway.com/deploy/railblog',
             },
           },
         ],
