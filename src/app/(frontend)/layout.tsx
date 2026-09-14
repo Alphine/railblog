@@ -10,6 +10,7 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
@@ -34,12 +35,26 @@ const instrumentSerif = Instrument_Serif({
   variable: '--font-instrument-serif',
 })
 
+async function getAppearanceTheme(): Promise<string> {
+  try {
+    const appearance = await getCachedGlobal('appearance', 0)()
+    return appearance?.theme ?? 'default'
+  } catch {
+    // No live database at build time (e.g. a Docker image build that runs
+    // before Postgres is provisioned) — fall back to the default theme;
+    // the real value is read again on each request once the DB is up.
+    return 'default'
+  }
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+  const theme = await getAppearanceTheme()
 
   return (
     <html
       className={cn(publicSans.variable, ibmPlexMono.variable, instrumentSerif.variable)}
+      data-appearance={theme}
       lang="en"
       suppressHydrationWarning
     >

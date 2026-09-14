@@ -164,6 +164,125 @@
   --error: oklch(45% 0.1 25deg);
 }
 
+/* ---------------------------------------------------------------------
+   Named appearance presets — set via the Appearance global in the admin
+   dashboard (`data-appearance` on <html>, rendered server-side). Each
+   preset is a complete, fixed look: it overrides every token regardless
+   of the light/dark toggle, and remixes the three fonts already loaded
+   in layout.tsx rather than pulling in new ones.
+   --------------------------------------------------------------------- */
+
+:root[data-appearance='techno'] {
+  --background: oklch(12% 0.02 265deg);
+  --foreground: oklch(96% 0.01 200deg);
+  --card: oklch(16% 0.025 265deg);
+  --card-foreground: oklch(96% 0.01 200deg);
+  --popover: oklch(12% 0.02 265deg);
+  --popover-foreground: oklch(96% 0.01 200deg);
+  --primary: oklch(78% 0.19 195deg);
+  --primary-foreground: oklch(10% 0.02 265deg);
+  --secondary: oklch(22% 0.03 265deg);
+  --secondary-foreground: oklch(90% 0.02 200deg);
+  --muted: oklch(20% 0.025 265deg);
+  --muted-foreground: oklch(62% 0.02 220deg);
+  --accent: oklch(26% 0.06 300deg);
+  --accent-foreground: oklch(85% 0.16 300deg);
+  --destructive: oklch(62% 0.22 25deg);
+  --destructive-foreground: oklch(96% 0.02 25deg);
+  --border: oklch(26% 0.03 265deg);
+  --input: oklch(26% 0.03 265deg);
+  --ring: oklch(78% 0.19 195deg);
+  --radius: 0.3rem;
+  --sidebar: oklch(14% 0.022 265deg);
+  --sidebar-foreground: oklch(96% 0.01 200deg);
+  --sidebar-primary: oklch(78% 0.19 195deg);
+  --sidebar-primary-foreground: oklch(10% 0.02 265deg);
+  --sidebar-accent: oklch(26% 0.06 300deg);
+  --sidebar-accent-foreground: oklch(85% 0.16 300deg);
+  --sidebar-border: oklch(26% 0.03 265deg);
+  --sidebar-ring: oklch(78% 0.19 195deg);
+  --success: oklch(75% 0.16 165deg);
+  --warning: oklch(80% 0.16 90deg);
+  --error: oklch(65% 0.22 25deg);
+  --font-sans: var(--font-ibm-plex-mono);
+  --font-serif: var(--font-ibm-plex-mono);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+:root[data-appearance='natural'] {
+  --background: oklch(97% 0.015 95deg);
+  --foreground: oklch(24% 0.025 130deg);
+  --card: oklch(99% 0.01 90deg);
+  --card-foreground: oklch(24% 0.025 130deg);
+  --popover: oklch(99% 0.01 90deg);
+  --popover-foreground: oklch(24% 0.025 130deg);
+  --primary: oklch(46% 0.09 145deg);
+  --primary-foreground: oklch(98% 0.012 95deg);
+  --secondary: oklch(92% 0.02 95deg);
+  --secondary-foreground: oklch(30% 0.03 130deg);
+  --muted: oklch(93% 0.018 90deg);
+  --muted-foreground: oklch(48% 0.025 120deg);
+  --accent: oklch(85% 0.07 55deg);
+  --accent-foreground: oklch(32% 0.06 40deg);
+  --destructive: oklch(55% 0.19 25deg);
+  --destructive-foreground: oklch(97% 0.01 25deg);
+  --border: oklch(88% 0.02 95deg);
+  --input: oklch(88% 0.02 95deg);
+  --ring: oklch(58% 0.09 145deg);
+  --radius: 0.9rem;
+  --sidebar: oklch(95% 0.015 90deg);
+  --sidebar-foreground: oklch(24% 0.025 130deg);
+  --sidebar-primary: oklch(46% 0.09 145deg);
+  --sidebar-primary-foreground: oklch(98% 0.012 95deg);
+  --sidebar-accent: oklch(85% 0.07 55deg);
+  --sidebar-accent-foreground: oklch(32% 0.06 40deg);
+  --sidebar-border: oklch(88% 0.02 95deg);
+  --sidebar-ring: oklch(58% 0.09 145deg);
+  --success: oklch(58% 0.1 150deg);
+  --warning: oklch(75% 0.12 75deg);
+  --error: oklch(55% 0.17 25deg);
+  --font-sans: var(--font-public-sans);
+  --font-serif: var(--font-instrument-serif);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+:root[data-appearance='casual'] {
+  --background: oklch(98% 0.008 90deg);
+  --foreground: oklch(22% 0.015 280deg);
+  --card: oklch(100% 0 0deg);
+  --card-foreground: oklch(22% 0.015 280deg);
+  --popover: oklch(100% 0 0deg);
+  --popover-foreground: oklch(22% 0.015 280deg);
+  --primary: oklch(68% 0.19 35deg);
+  --primary-foreground: oklch(99% 0.01 90deg);
+  --secondary: oklch(94% 0.02 90deg);
+  --secondary-foreground: oklch(30% 0.02 280deg);
+  --muted: oklch(94% 0.015 90deg);
+  --muted-foreground: oklch(52% 0.02 280deg);
+  --accent: oklch(88% 0.13 95deg);
+  --accent-foreground: oklch(35% 0.08 60deg);
+  --destructive: oklch(60% 0.21 25deg);
+  --destructive-foreground: oklch(98% 0.01 25deg);
+  --border: oklch(91% 0.012 90deg);
+  --input: oklch(91% 0.012 90deg);
+  --ring: oklch(72% 0.17 35deg);
+  --radius: 1.25rem;
+  --sidebar: oklch(96% 0.01 90deg);
+  --sidebar-foreground: oklch(22% 0.015 280deg);
+  --sidebar-primary: oklch(68% 0.19 35deg);
+  --sidebar-primary-foreground: oklch(99% 0.01 90deg);
+  --sidebar-accent: oklch(88% 0.13 95deg);
+  --sidebar-accent-foreground: oklch(35% 0.08 60deg);
+  --sidebar-border: oklch(91% 0.012 90deg);
+  --sidebar-ring: oklch(72% 0.17 35deg);
+  --success: oklch(68% 0.12 155deg);
+  --warning: oklch(80% 0.14 85deg);
+  --error: oklch(60% 0.2 25deg);
+  --font-sans: var(--font-public-sans);
+  --font-serif: var(--font-public-sans);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
